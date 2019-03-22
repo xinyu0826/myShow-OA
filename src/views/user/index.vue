@@ -1,13 +1,12 @@
 <template>
-  <div class="app">
-    <router-view></router-view>
+  <div>
+    <h2>userlist列表</h2>
   </div>
 </template>
 
 <script>
 export default {
-
-  name: 'app',
+  name: 'userlist',
   data () {
     return {}
   }
@@ -15,7 +14,5 @@ export default {
 </script>
 
 <style scoped>
-  .app {
-    height: 100%;
-  }
+
 </style>
