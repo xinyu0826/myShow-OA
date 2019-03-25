@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { login } from '@/api'
 
 export default {
   name: 'login',
@@ -49,16 +49,16 @@ export default {
     },
 
     async login () {
-      const retData = await axios.post('http://localhost:8888/api/private/v1/login', this.loginForm)
-      const { meta } = retData.data
+      const { meta, data } = await login(this.loginForm)
       if (meta.status === 200) {
         this.$message({
           message: '登陆成功',
           type: 'success'
         })
+        // 将登陆成功的账号和密码存储到本地中，用以其他地方使用
+        window.localStorage.setItem('token', data.token)
         this.$router.replace('/')
       } else {
-        console.log(retData)
         this.$message.error(`登录失败：${meta.msg}`)
       }
     }
