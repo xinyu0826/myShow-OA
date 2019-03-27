@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getItem } from '@/utils/auth'
 
 const http = axios.create({
   baseURL: 'http://localhost:8888/api/private/v1/'
@@ -8,7 +9,8 @@ const http = axios.create({
 http.interceptors.request.use(function (config) {
   console.log('3. 请求经过请求拦截器，这里统一的加 token')
   if (config.url !== '/login') {
-    config.headers.Authorization = window.localStorage.getItem('token')
+    // config.headers.Authorization = window.localStorage.getItem('token')
+    config.headers.Authorization = getItem()
   }
   //请求通过的规则，如果不return config 则请求不会发出去
   return config

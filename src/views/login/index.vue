@@ -9,7 +9,7 @@
           <el-input v-model="loginForm.password" type="password"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="login-btn" type="primary" @click="onSubmit">登录</el-button>
+          <el-button class="login-btn" type="primary" @click.enter="onSubmit">登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -18,6 +18,7 @@
 
 <script>
 import { login } from '@/api'
+import { setItem } from '@/utils/auth'
 
 export default {
   name: 'login',
@@ -56,7 +57,8 @@ export default {
           type: 'success'
         })
         // 将登陆成功的账号和密码存储到本地中，用以其他地方使用
-        window.localStorage.setItem('token', data.token)
+        // window.localStorage.setItem('token', data.token)
+        setItem(data.token)
         this.$router.replace('/')
       } else {
         this.$message.error(`登录失败：${meta.msg}`)

@@ -4,6 +4,9 @@ import layout from '@/views/layout'
 import login from '@/views/login'
 import home from '@/views/Home'
 import user from '@/views/user'
+import rightsList from '@/views/rights' // 权限列表
+import rolesList from '@/views/roles'
+import { getItem } from '@/utils/auth'
 
 Vue.use(Router)
 
@@ -13,7 +16,9 @@ const router = new Router({
       component: layout,
       children: [
         { path: '', component: home },
-        { path: '/users', component: user }
+        { path: '/users', component: user },
+        { path: '/rights', component: rightsList }, // 权限列表
+        { path: '/roles', component: rolesList } // 角色列表
       ]
     },
     { path: '/login', component: login }
@@ -30,7 +35,8 @@ const router = new Router({
       return next()
     }
   //否则验证登陆状态,获取用getItem，设置用setItem(设置必须是两个参数)
-    const token = window.localStorage.getItem('token')
+    // const token = window.localStorage.getItem('token')
+    const token = getItem()
   //如果没有登陆，就跳转到登陆页
     if (!token) {
       return next('/login')
