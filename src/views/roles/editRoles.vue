@@ -10,7 +10,7 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="addRolesFormVisible = false">取 消</el-button>
-      <el-button type="primary" @click.prevent="submitEdit">确 定</el-button>
+      <el-button type="primary" @click.prevent="roule">确 定</el-button>
     </div>
   </el-dialog>
 </template>
@@ -41,6 +41,16 @@ export default {
     }
   },
   methods: {
+    // 表单验证
+    roule () {
+      this.$refs.userEditFormData.validate(valid => {
+        if (!valid) {
+          return false
+        }
+        this.submitEdit()
+      })
+    },
+
     // 确认按钮
     async submitEdit () {
       const { roleId, roleName, roleDesc } = this.addFormData

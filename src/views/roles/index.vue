@@ -20,7 +20,7 @@
           <el-row class="first" v-for="first in scope.row.children" :key="first.id">
             <!-- 一级 -->
             <el-col :span="3">
-              <el-tag closable>{{ first.authName }}</el-tag>
+              <el-tag closable  @close="handleDeleteRights(scope.row, first)">{{ first.authName }}</el-tag>
               <i class="el-icon-arrow-right"></i>
             </el-col>
 
@@ -28,13 +28,13 @@
             <el-col :span="20">
               <el-row class="second" v-for="second in first.children" :key="second.id">
                 <el-col :span="4">
-                  <el-tag closable type="success">{{ second.authName }}</el-tag>
+                  <el-tag closable type="success"  @close="handleDeleteRights(scope.row, second)">{{ second.authName }}</el-tag>
                   <i class="el-icon-arrow-right"></i>
                 </el-col>
 
                 <!-- 三级 -->
                 <el-col :span="20">
-                  <el-tag class="third" v-for="third in second.children" :key="third.id" closable type="warning">{{ third.authName }}</el-tag>
+                  <el-tag class="third" v-for="third in second.children" :key="third.id" closable type="warning"  @close="handleDeleteRights(scope.row, third)">{{ third.authName }}</el-tag>
                 </el-col>
               </el-row>
             </el-col>
@@ -88,10 +88,8 @@
 </template>
 
 <script>
-import { getRoleList } from '@/api/role'
+import { getRoleList, deleRoles, edit, roleDelete } from '@/api/role'
 import addRoles from './addRoles'
-import { deleRoles } from '@/api/role'
-import { edit } from '@/api/role'
 import editRoles from './editRoles'
 import showEdit from './editRights'
 
@@ -112,6 +110,7 @@ export default {
     this.rolesLoading()
   },
   methods: {
+
     // 刷新数据列表
     async rolesLoading () {
       const { meta, data } = await getRoleList()
@@ -125,7 +124,7 @@ export default {
     async addR () {
       this.$refs.addRolesEl.addRol()
     },
-    // 删除
+    // 删除角色
     async deleteRoles (item) {
       this.$confirm('确认删除吗？', '删除提示', {
         confirmButtonText: '确定',
@@ -150,12 +149,24 @@ export default {
       })
     },
     // 编辑角色
-    async editRights (item) {
+    editRights (item) {
       this.$refs.editRolesEl.showEditDialog(item)
     },
     // 树形编辑框
-    async showEdit (item) {
+    showEdit (item) {
       this.$refs.showEditEl.showDialog(item)
+    },
+    // 删除权限 role 是角色 right 是权限
+    async handleDeleteRights (role, right) {
+      const { meta, data } = await roleDelete(role.id, right.id)
+      if (meta.status === 200) {
+        // 删除接口会返回该用户的最新的权限列表，我们可以直接把这个 data 赋值给当前角色的权限列表
+        role.children = data
+        this.$message({
+          type: 'success',
+          message: '删除权限成功'
+        })
+      }
     }
   }
 }

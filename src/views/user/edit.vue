@@ -13,7 +13,7 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="userEditFormVisible = false">取 消</el-button>
-      <el-button type="primary" @click.prevent="submitEdit">确 定</el-button>
+      <el-button type="primary" @click.prevent="headerUserEdit">确 定</el-button>
     </div>
   </el-dialog>
 </template>
@@ -64,14 +64,14 @@ export default {
   },
   methods: {
     // 表单验证
-    // headerUserEdit () {
-    //   this.$refs.userEditFormData.validate(valid => {
-    //     if (!valid) {
-    //       return false
-    //     }
-    //     this.submitEdit()
-    //   })
-    // },
+    headerUserEdit () {
+      this.$refs.userEditFormData.validate(valid => {
+        if (!valid) {
+          return false
+        }
+        this.submitEdit()
+      })
+    },
 
     // 确定修改
     async submitEdit () {

@@ -50,10 +50,20 @@ export const queryEdit = (id) => request({
 /**
  * 角色授权
  */
-export const roleAuthorize = (id) => request({
+export const roleAuthorize = (id, rids) => request({
   method: 'post',
   url: `/roles/${id}/rights`,
   data: {
-    id
+    rids
   }
+}).then(res => res.data)
+
+/**
+ * 删除角色指定权限
+ * roleId 是角色id
+ * rightId 是权限id
+ */
+export const roleDelete = (roleId, rightId) => request({
+  method: 'delete',
+  url: `/roles/${roleId}/rights/${rightId}`
 }).then(res => res.data)

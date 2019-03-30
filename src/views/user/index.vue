@@ -23,14 +23,17 @@
           <el-col :span="6"><el-button type="primary" plain @click="addlogFormVisible = true">添加用户</el-button></el-col>
         </el-row>
         <!--结束 input框 -->
-        <!--表格 -->
+        <!--表格
+            :index="indexMethod" 使index序号切换下一页也能保持顺序一致
+         -->
         <el-table
           :data="userTableData"
           style="width: 80%"
           v-loading="tableLoading">
           <el-table-column
             type="index"
-            width="80">
+            width="80"
+            :index="indexMethod">
           </el-table-column>
           <el-table-column
             prop="username"
@@ -92,7 +95,7 @@
           background
           @size-change="handleSizeChange"
           @current-change="loadUsers"
-          :current-page="currentPage1"
+          :current-page.sync="currentPage1"
           :page-sizes="[5, 10, 15, 20, 25, 30, 35, 40, 45, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
@@ -103,7 +106,7 @@
 
     <!-- 添加用户对话框 -->
     <el-dialog title="添加用户" :visible.sync="addlogFormVisible">
-      <el-form :model="addFormData" ref="addFormData">
+      <el-form :model="addFormData" ref="addFormData" :rules="rules">
         <el-form-item label="用户名称" label-width="80px">
           <el-input v-model="addFormData.username" autocomplete="off"></el-input>
         </el-form-item>
@@ -119,7 +122,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addlogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click.prevent="headerAdd(addFormData)">确 定</el-button>
+        <el-button type="primary" @click.prevent="addrules(addFormData)">确 定</el-button>
       </div>
     </el-dialog>
     <!--结束 添加用户对话框 -->
@@ -140,6 +143,7 @@ import UserEdit from './edit'
 import UserEditRole from './edit-role'
 
 export default {
+
   // 生命周期
   async created () {
     console.log('2. token 存在，进入了具体的业务组件')
@@ -148,6 +152,7 @@ export default {
   },
   name: 'userlist',
   data () {
+
     return {
       userTableData: [],
       addFormData: {
@@ -160,35 +165,61 @@ export default {
       pageSize: 5, // 每页数据条数
       total: 0, // 数据总条数
       currentPage1: 1, // 分页
-      addlogFormVisible: false, //对话框 是否 显示，false为不显示
+      addlogFormVisible: false, //对话框 是否 显示，false为不显示 validate
       tableLoading: true, //加载效果 ，true为有加载效果
-      disabled: false //按钮禁用 fales为不禁用
+      disabled: false, //按钮禁用 fales为不禁用
+      // 表单验证
+      rules: {
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+        ],
+        mobile: [
+          { required: true, message: '请输入电话', trigger: 'blur' }
+        ]
+      },
     }
   },
   components: {
-    UserEdit, // 自定义编辑对话框组件
+    UserEdit, // 自定义编辑对话框组件 rules
     UserEditRole
   },
+
   methods: {
+
+    // 使index序号切换下一页也能保持顺序一致 乘5是指每页有五条数据 currentPage1是对应上面的分页
+    indexMethod (index) {
+      return (this.currentPage1 - 1) * 5 + index + 1
+    },
+
+    // 表单验证
+    addrules () {
+      this.$refs.addFormData.validate(valid => {
+        if (!valid) {
+          return false
+        }
+        this.headerAdd()
+      })
+    },
 
     async loadUsers (page = 1, pageSize = this.pageSize) {
       console.log(pageSize)
-      this.tableLoading = true //设置加载效果
+      this.tableLoading = true // 设置加载效果
       // 除了登陆接口，其它接口都需要身份令牌才能访问
-      //所有需要授权（提供 token）的接口都需要像下面这样来写
+      // 所有需要授权（提供 token）的接口都需要像下面这样来写
       const { data } = await User.getUserList({ pagenum: page, pagesize: pageSize, query: this.searchText })
       this.userTableData = data.users
       // console.log(data)
       this.total = data.total
-      this.tableLoading = false //取消加载效果
+      this.tableLoading = false // 取消加载效果
     },
     async headerAdd () {
       const { meta } = await User.addUser(this.addFormData)
       if (meta.status === 201) {
-        this.disabled = true //禁用确认按钮
-        this.addlogFormVisible = false //隐藏对话框
-        this.loadUsers() //重新刷新数据
-        this.$refs.addFormData.resetFields(); //重置效果，也就是清空输入框 (这个功能有问题)
+        this.disabled = true // 禁用确认按钮
+        this.addlogFormVisible = false // 隐藏对话框
+        this.loadUsers() // 重新刷新数据
+        this.$refs.addFormData.resetFields() // 重置效果，也就是清空输入框 (这个功能有问题)
       }
     },
 
@@ -199,14 +230,14 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async () => {
-        const { data, meta } = await User.deleteById(item.id)
+        const { meta } = await User.deleteById(item.id)
         if (meta.status === 200) {
           this.$message({
             type: 'success',
             message: '删除成功'
           })
           // 刷出数据
-          this.loadUsers()
+          this.loadUsers(this.currentPage1)
         }
       }).catch((err) => {
         console.log(err)
@@ -227,7 +258,7 @@ export default {
         })
       }
     },
-    //分页
+    // 分页
     async handleSizeChange (val) {
       this.pageSize = val
       console.log(`每页 ${this.pageSize} 条`)

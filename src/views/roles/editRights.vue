@@ -14,6 +14,7 @@
 +   -->
     <el-tree
       :data="rights"
+      ref="tree"
       show-checkbox
       default-expand-all
       :default-checked-keys="defaultChecked"
@@ -73,9 +74,13 @@ export default {
     // 确定按钮
     async submitEdit () {
       const id = this.roleId
-      const { meta, data } = await roleAuthorize(id)
+      const tree = this.$refs.tree
+      console.log(...tree.getCheckedKeys())
+      console.log(...tree.getHalfCheckedKeys())
+      const rids = [...tree.getCheckedKeys(), ...tree.getHalfCheckedKeys()].join(',')
+      console.log(rids)
+      const { meta } = await roleAuthorize(id, rids)
       if (meta.status === 200) {
-        console.log(data)
         // 关闭弹框
         this.addRolesFormVisible = false
         // 刷新数据列表

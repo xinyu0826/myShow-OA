@@ -1,6 +1,6 @@
 <template>
   <el-dialog title="分类编辑用户" :visible.sync="userEditFormVisible">
-    <el-form :model="userEditFormData" ref="userEditFormData" :rules="rules">
+    <el-form :model="userEditFormData" ref="userEditFormData">
       <el-form-item label="用户名称" label-width="80px" prop="username">
         <el-input v-model="userEditFormData.username" autocomplete="off" disabled></el-input>
       </el-form-item>
@@ -20,7 +20,7 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="userEditFormVisible = false">取 消</el-button>
-      <el-button type="primary" @click.prevent="handleEditRole">确 定</el-button>
+      <el-button type="primary" @click.prevent="roule">确 定</el-button>
     </div>
   </el-dialog>
 </template>
@@ -40,25 +40,18 @@ export default {
         email: '',
         rid: 0
       },
-      roles: [],
-      // 表单验证
-      rules: {
-        email: [
-          { required: true, message: '请输入邮箱', trigger: 'blur' },
-          { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
-        ]
-      }
+      roles: []
     }
   },
   methods: {
 
     // 确定修改
-    async handleEditRole () {
+    async roule () {
       const { id: userId, rid: roleId } = this.userEditFormData
       // 传参修改
-      const { data, meta } = await updateUserRoleByUserId(userId, roleId)
+      const { meta } = await updateUserRoleByUserId(userId, roleId)
       if (meta.status === 200) {
-        //关闭对话框
+        // 关闭对话框
         this.userEditFormVisible = false
         // 更新成功提示
         this.$message({

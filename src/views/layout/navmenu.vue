@@ -8,96 +8,16 @@
     text-color="#fff"
     active-text-color="#ffd04b"
     :router="true">
-    <el-submenu index="1">
+    <el-submenu :index="first.id + ''" v-for="first in menus" :key="first.id">
       <template slot="title">
         <i class="el-icon-location"></i>
-        <span>用户管理</span>
+        <span>{{ first.authName }}</span>
       </template>
       <el-menu-item-group>
-        <el-menu-item index="/users">
+        <el-menu-item :index="`/${second.path}`" v-for="second in first.children" :key="second.id">
           <template slot="title">
             <i class="el-icon-location"></i>
-            <span>用户列表</span>
-          </template>
-        </el-menu-item>
-      </el-menu-item-group>
-    </el-submenu>
-    <el-submenu index="2">
-      <template slot="title">
-        <i class="el-icon-location"></i>
-        <span>权限管理</span>
-      </template>
-      <el-menu-item-group>
-        <el-menu-item index="/roles">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>角色列表</span>
-          </template>
-        </el-menu-item>
-      </el-menu-item-group>
-      <el-menu-item-group>
-        <el-menu-item index="/rights">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>权限列表</span>
-          </template>
-        </el-menu-item>
-      </el-menu-item-group>
-    </el-submenu>
-    <el-submenu index="3">
-      <template slot="title">
-        <i class="el-icon-location"></i>
-        <span>商品管理</span>
-      </template>
-      <el-menu-item-group>
-        <el-menu-item index="3-1">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>商品列表</span>
-          </template>
-        </el-menu-item>
-      </el-menu-item-group>
-      <el-menu-item-group>
-        <el-menu-item index="3-2">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>分类参数</span>
-          </template>
-        </el-menu-item>
-      </el-menu-item-group>
-      <el-menu-item-group>
-        <el-menu-item index="3-3">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>商品分类</span>
-          </template>
-        </el-menu-item>
-      </el-menu-item-group>
-    </el-submenu>
-    <el-submenu index="4">
-      <template slot="title">
-        <i class="el-icon-location"></i>
-        <span>订单管理</span>
-      </template>
-      <el-menu-item-group>
-        <el-menu-item index="4-1">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>订单列表</span>
-          </template>
-        </el-menu-item>
-      </el-menu-item-group>
-    </el-submenu>
-    <el-submenu index="5">
-      <template slot="title">
-        <i class="el-icon-location"></i>
-        <span>数据统计</span>
-      </template>
-      <el-menu-item-group>
-        <el-menu-item index="5-1">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>数据报表</span>
+            <span>{{ second.authName }}</span>
           </template>
         </el-menu-item>
       </el-menu-item-group>
@@ -106,10 +26,17 @@
 </template>
 
 <script>
+import { getRightsMenu } from '@/api/rights'
+
 export default {
   name: 'MavMenu',
   data () {
-    return {}
+    return {
+      menus: []
+    }
+  },
+  created () {
+    this.loadRightsMenu()
   },
   methods: {
     handleOpen (key, keyPath) {
@@ -117,6 +44,13 @@ export default {
     },
     handleClose (key, keyPath) {
       console.log(key, keyPath)
+    },
+    async loadRightsMenu () {
+      const { meta, data } = await getRightsMenu()
+      // console.log(data)
+      if (meta.status === 200) {
+        this.menus = data
+      }
     }
   }
 }

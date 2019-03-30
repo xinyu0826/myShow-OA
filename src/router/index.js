@@ -7,6 +7,9 @@ import user from '@/views/user'
 import rightsList from '@/views/rights' // 权限列表
 import rolesList from '@/views/roles'
 import { getItem } from '@/utils/auth'
+import shopList from '@/views/shop'
+import addShop from '@/views/addShop'
+import categories from '@/views/categories'
 
 Vue.use(Router)
 
@@ -18,7 +21,10 @@ const router = new Router({
         { path: '', component: home },
         { path: '/users', component: user },
         { path: '/rights', component: rightsList }, // 权限列表
-        { path: '/roles', component: rolesList } // 角色列表
+        { path: '/roles', component: rolesList }, // 角色列表
+        { path: '/goods', component: shopList }, // 商品列表
+        { path: '/addShop', component: addShop }, // 添加商品
+        { path: '/params', component: categories } // 商品的分类参数
       ]
     },
     { path: '/login', component: login }
