@@ -13,7 +13,7 @@ export const getGoodsCategoryList = (type = 3) => request({
 }).then(res => res.data)
 
 // 添加商品分类
-export const addGoods = ({ goods_name, goods_cat, goods_price, goods_number, goods_weight, attrs = [],pics = [] }) => request({
+export const addGoods = ({ goods_name, goods_cat, goods_price, goods_number, goods_weight, attrs = [], pics = [], goods_introduce = '' }) => request({
   method: 'post',
   url: '/goods',
   data: {
@@ -23,7 +23,8 @@ export const addGoods = ({ goods_name, goods_cat, goods_price, goods_number, goo
     goods_number,
     goods_weight,
     attrs,
-    pics
+    pics,
+    goods_introduce
   }
 }).then(res => res.data)
 

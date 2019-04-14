@@ -17,7 +17,7 @@
         type="expand"
         width="50">
         <template slot-scope="scope">
-          <el-row class="first" v-for="first in scope.row.children" :key="first.id">
+          <el-row class="first" v-for="first in scope.row.rights" :key="first.id">
             <!-- 一级 -->
             <el-col :span="3">
               <el-tag closable  @close="handleDeleteRights(scope.row, first)">{{ first.authName }}</el-tag>
@@ -115,6 +115,10 @@ export default {
     async rolesLoading () {
       const { meta, data } = await getRoleList()
       if (meta.status === 200) {
+        data.forEach(item => {
+          item.rights = item.children
+          delete item.children // 删除 children
+        })
         // console.log(data)
         this.num = data.length
         this.rolesForm = data

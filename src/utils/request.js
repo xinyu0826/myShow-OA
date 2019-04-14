@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { getItem } from '@/utils/auth'
+import router from '@/router'
 
 const http = axios.create({
   baseURL: 'http://localhost:8888/api/private/v1/'
@@ -23,7 +24,7 @@ http.interceptors.response.use(function (response) {
   console.log('4. 响应回来先经过响应拦截器，这里判断响应码是否为 401')
   // console.log(response.data.meta.status)
   if (response.data.meta.status === 401) {
-    return replace('/login')
+    router.replace('/login')
   }
   //这里 return 的 response 会作为你真正的响应结果
   // console.log(response)

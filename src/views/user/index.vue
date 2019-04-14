@@ -17,7 +17,7 @@
             class="input-with-select"
             v-model="searchText"
             @keyup.enter.native="loadUsers(1)">
-              <el-button slot="append" icon="el-icon-search"></el-button>
+              <el-button slot="append" icon="el-icon-search" @click="loadUsers(1)"></el-button>
             </el-input>
           </el-col>
           <el-col :span="6"><el-button type="primary" plain @click="addlogFormVisible = true">添加用户</el-button></el-col>

@@ -116,6 +116,7 @@
         </el-row>
       </el-tab-pane>
       <el-tab-pane label="商品内容">
+        <RichTextEditor :content.sync="formLabelAlign.goods_introduce" />
         <el-row :gutter="20" class="bbt">
           <el-col :span="20">
             <el-button size="medium" @click.prevent="$router.replace('/goods')">取消</el-button>
@@ -129,11 +130,16 @@
 </template>
 
 <script>
+import E from 'wangeditor' // 富文本编辑器
 import { getGoodsCategoryList, addGoods, getGoodsCategoryAttrs } from '@/api/categories'
 import { getItem } from '@/utils/auth'
+import RichTextEditor from '@/components/RichTextEditor'
 
 export default {
   name: 'addShop',
+  components: {
+    RichTextEditor
+  },
   data () {
     return {
       uploadHeaders: { // 上传组件自定义请求头
@@ -148,7 +154,8 @@ export default {
         goods_weight: '',
         goods_number: '',
         goods_cat: [],
-        is_promote: ''
+        is_promote: '',
+        goods_introduce: '' // 存储富文本编辑内容
       },
       // checkboxGroup5: [
       //   '49吋4K超薄曲面 人工智能',
@@ -162,6 +169,7 @@ export default {
   created () {
     this.loadingCategories()
   },
+
   methods: {
     // 刷新数据
     async loadingCategories () {
@@ -179,7 +187,8 @@ export default {
         goods_cat,
         goods_price,
         goods_number,
-        goods_weight
+        goods_weight,
+        goods_introduce
       } = this.formLabelAlign
       // console.log(this.formLabelAlign)
 
@@ -217,19 +226,33 @@ export default {
         goods_number,
         goods_weight,
         attrs,
-        pics
+        pics,
+        goods_introduce
       })
       console.log(data)
+      // if (data === null) {
+      //   this.$message({
+      //     type: 'warning',
+      //     message: '请把信息写完整'
+      //   })
+      //   this.loadingCategories()
+      // }
       if (meta.status === 201) {
         this.$router.replace('/goods')
         this.$message({
           type: 'success',
           message: '添加成功'
         })
+        // 刷新数据
+        this.loadingCategories()
       }
     },
 
     handleTabChange (currentTab) {
+      // ECMAScript 6 将原来的一些全局函数 parseInt 归纳到了 Number 对象模块中
+      // 推荐调用这个成员的时候加上 Number
+      // 它的目的是为了让其语法更模块化
+      this.active = Number.parseInt(currentTab.index)
       const { label } = currentTab
       if (label === '商品参数' || label === '商品属性') {
         // 根据在第一个 tab 选中的分类 id 动态请求加载商品参数
@@ -251,7 +274,7 @@ export default {
 
     // 商品参数
     async loadGoodsCategoryAttrs () {
-      this.active = 2
+      // this.active = 2
       const { goods_cat } = this.formLabelAlign
       const { meta, data } = await getGoodsCategoryAttrs(goods_cat[goods_cat.length - 1])
       console.log(data)
@@ -265,7 +288,7 @@ export default {
     },
     // 加载商品属性
     async loadGoodsCategoryParams () {
-      this.active = 3
+      // this.active = 3
       const { goods_cat } = this.formLabelAlign
       const { meta, data } = await getGoodsCategoryAttrs(goods_cat[goods_cat.length - 1], 'only')
       if (meta.status === 200) {
@@ -280,7 +303,7 @@ export default {
      * fileList 是存储文件信息的列表数据
      */
     handleUploadSuccess (response, file, fileList) {
-      this.active = 4
+      // this.active = 4
       // console.log('response => ', response)
       // console.log('file => ', file)
       // console.log('fileList => ', fileList)
@@ -288,6 +311,10 @@ export default {
         name: file.name, // 接口要求名字叫 pic
         url: `http://localhost:8888/${response.data.tmp_path}`
       })
+    },
+
+    handleEditorChange (editorContent) {
+      this.formLabelAlign.goods_introduce = editorContent
     }
 
   }

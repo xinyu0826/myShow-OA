@@ -10,6 +10,9 @@ import { getItem } from '@/utils/auth'
 import shopList from '@/views/shop'
 import addShop from '@/views/addShop'
 import categories from '@/views/categories'
+import GoodsCategory from '@/views/GoodsCategory'
+import order from '@/views/orders'
+import reports from '@/views/reports'
 
 Vue.use(Router)
 
@@ -24,7 +27,10 @@ const router = new Router({
         { path: '/roles', component: rolesList }, // 角色列表
         { path: '/goods', component: shopList }, // 商品列表
         { path: '/addShop', component: addShop }, // 添加商品
-        { path: '/params', component: categories } // 商品的分类参数
+        { path: '/params', component: categories }, // 商品管理的分类参数
+        { path: '/categories', component: GoodsCategory }, // 商品管理的商品分类
+        { path: '/orders', component: order }, // 订单数据列表
+        { path: '/reports', component: reports } // 数据统计表
       ]
     },
     { path: '/login', component: login }

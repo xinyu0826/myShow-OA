@@ -9,7 +9,7 @@
       <el-container>
         <!-- 侧边栏 -->
         <el-aside width="200px" class="el-aside">
-          <MavMenu></MavMenu>
+          <MavMenu @menu-select="handleMenuSelect"></MavMenu>
         </el-aside>
         <!-- 中间内容 -->
         <el-main class="el-main">
@@ -19,8 +19,7 @@
               <span>
                 <el-breadcrumb separator=">>">
                   <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                  <el-breadcrumb-item><a href="/">用户管理</a></el-breadcrumb-item>
-                  <el-breadcrumb-item>用户列表</el-breadcrumb-item>
+                  <el-breadcrumb-item v-for="(item, index) in breadNames" :key="index">{{ item }}</el-breadcrumb-item>
                 </el-breadcrumb>
               </span>
             </div>
@@ -40,10 +39,15 @@ import MavMenu from './navmenu'
 export default {
   name: 'layout',
   data () {
-    return {}
+    return {
+      breadNames: []
+    }
   },
   methods: {
-
+    handleMenuSelect (names) {
+      // console.log(names)
+      this.breadNames = names
+    }
   },
   components: {
     AppHeader,
